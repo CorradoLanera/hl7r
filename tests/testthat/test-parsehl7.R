@@ -115,3 +115,25 @@ test_that("parsehl7 manage two separated messages", {
   expect_length(res_txt_spaced, 2L)
   expect_equal(res_txt_spaced, res_txt)
 })
+
+
+
+test_that("parsehl7 admit path as first input", {
+  # setup
+  sample_txt <- c(
+    "MSH|^~`&|ECG REPORTING|ROCHESTER|ERIS|ROCHESTER|20110621050440||ORU^R01|20110621050440|P|2.1",
+    "PID|||999999999||TEST^PATIENT||18450101|F",
+    "OBR|||211088491|0^ADULT^ROCHECG|||20110620170631|||||||||M999999^^^^^^^RACFID||||||20110621060232||EC|F|||||||M999999^LASTNAME MD^FIRSTNAME^^^^^RACFID",
+    "OBX||ST|93000.2^VENTRICULAR RATE EKG/MIN^CPT4|1|52|/SEC"
+  )
+
+  sample_file <- withr::local_file("sample_hl7")
+  writeLines(sample_txt, sample_file)
+
+  # eval
+  explicit_import <- parsehl7(file = sample_file)
+  implicit_import <- parsehl7(sample_file)
+
+  # test
+  expect_equal(implicit_import, explicit_import)
+})

@@ -2,12 +2,17 @@
 #'
 #' @usage parsehl7(feed, file)
 #'
-#' @param feed A vector representing an HL7 feed, the equivalent output of \code{readLines(file.hl7)}
-#' @param file A file containing a valid HL7 feed
+#' @param feed A vector representing an HL7 feed, the equivalent output
+#'   of \code{readLines(file.hl7)}. This can also admit a path to an HL7
+#'   file.
+#' @param file A file containing a valid HL7 feed. This argument is no
+#'   more necessary, it remains for backward compatibility.
 #'
 #' @return A List of Parsed HL7 Messages
 #'
-#' @description This function accepts either a character vector containing separate HL7 segments or a valid HL7 file as input, and returns a parsed R data structure.
+#' @description This function accepts either a character vector
+#'   containing separate HL7 segments or a valid HL7 file as input, and
+#'   returns a parsed R data structure.
 #'
 #' @export
 parsehl7 <- function(feed, file){
@@ -20,6 +25,14 @@ parsehl7 <- function(feed, file){
   # Load the Data (If Necessary)
   if(!missing(file)){
     feed <- readLines(file)
+  }
+
+  if (
+    length(feed) == 1L &&
+    file.exists(feed) &&
+    grepl("hl7", feed, ignore.case = TRUE)
+  ) {
+    feed <- readLines(feed)
   }
 
   # Validate that Data is Valid HL7
